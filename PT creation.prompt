@@ -598,12 +598,6 @@ Part 3: Example of PT XML Structure (for guidance)
     </subproblem>
   </subproblems>
 </problem-template>
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Xml
-IGNORE_WHEN_COPYING_END
 
 SECTION C: PRINCIPLES OF GOOD RANDOMIZATION (FOR PT CREATION)
 
@@ -643,23 +637,12 @@ Example (bulleted):
 
 <p>We need the following:</p>
 <p><ul><li>Item A.</li><li>Item B.</li></ul></p>
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Xml
-IGNORE_WHEN_COPYING_END
 
 Example (numbered):
 
 <p>Follow these steps:</p>
 <p><ol><li>First step details.</li><li>Second step details.</li></ol></p>
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Xml
-IGNORE_WHEN_COPYING_END
+
 
 Each list item (<li> content) must begin with a capital letter.
 
@@ -1225,12 +1208,6 @@ The complete Problem Template XML
 <problem-template id="UNIQUE_PT_ID"> <!-- Ensure a unique ID is used -->
   <!-- ... all authored content, including instructions, mathyon-s, subproblems, steps, hints, etc. ... -->
 </problem-template>
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Xml
-IGNORE_WHEN_COPYING_END
 
 This XML must be well-formed, mathematically and pedagogically sound, correctly styled, localized, and robust for the specified randomization.
 
