@@ -477,6 +477,7 @@ function.equals(helperFunc, xArg^2 + 5)
 function.declare(mainFunc, xArg)   // 'mainFunc' contains only letters
 function.equals(mainFunc, N(helperFunc(xArg)) + xArg)
 
+
 In this case, mainFunc(xArg) would be equivalent to (xArg^2 + 5) + xArg.
 
 If the N() wrapper is omitted and mainFunc is defined as function.equals(mainFunc, helperFunc(xArg)), the behavior might be an unevaluated symbolic representation rather than inheriting the full expression of helperFunc(xArg). Using N(helperFunc(xArg)) is the correct way to ensure mainFunc is defined by the expression of helperFunc(xArg).
@@ -597,8 +598,12 @@ Part 3: Example of PT XML Structure (for guidance)
     </subproblem>
   </subproblems>
 </problem-template>
-
-
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Xml
+IGNORE_WHEN_COPYING_END
 
 SECTION C: PRINCIPLES OF GOOD RANDOMIZATION (FOR PT CREATION)
 
@@ -638,13 +643,23 @@ Example (bulleted):
 
 <p>We need the following:</p>
 <p><ul><li>Item A.</li><li>Item B.</li></ul></p>
-
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Xml
+IGNORE_WHEN_COPYING_END
 
 Example (numbered):
 
 <p>Follow these steps:</p>
 <p><ol><li>First step details.</li><li>Second step details.</li></ol></p>
-
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Xml
+IGNORE_WHEN_COPYING_END
 
 Each list item (<li> content) must begin with a capital letter.
 
@@ -1087,6 +1102,18 @@ Use iv() correctly and ensure iv() steps have no hints.
 
 Use precise_dec vs. fixeddec/truncating_dec appropriately.
 
+Controlled refine() Usage for Substitution Display:
+When substituting values (especially 1) into expressions or equations (e.g., a1*xVar + b1*yVar = c1 where xVar is substituted with 1), a global refine() might over-simplify the display by removing the explicit multiplication by 1 (e.g., refine(aVal*1 + bVal*yVar = cVal) could display as aVal + bVal*yVar = cVal instead of the desired aVal [x] 1 + bVal*yVar = cVal).
+To show the multiplication by 1 (or other specific formatting) while still refining other parts of the expression (e.g., handling signs of coefficients correctly):
+1. Construct the expression such that the part you want to remain un-refined (e.g., aVal*1) is not directly inside the refine() call that targets other terms.
+2. Use refine(0 + term_to_refine_carefully) for parts where sign simplification or other minor cleanup is needed without affecting the explicit multiplication elsewhere (e.g., refine(0 + bVal*yVar) to correctly display + bVal*yVar or - abs(bVal)*yVar).
+3. If the refine(0 + ...) might leave a leading 0 + (if the term was positive and complex enough not to be fully absorbed), wrap the relevant side of the equation or the entire sub-expression with cancel_zeroes().
+* Example: Given a1*x + b1*y = c1 in <mathyon-s> with a1=aVal, x=xSubVal (e.g., 1), b1=bVal, y=yVar, c1=cVal.
+To display the substitution step as (e.g., for aVal=5, xSubVal=1, bVal=-1, yVar='y', cVal=3): 5 [x] 1 - y = 3.
+The Mathyon expression in the <step> could be:
+<mi>cancel_zeroes(aVal*xSubVal + refine(0 + bVal*yVar)) = cVal</mi>
+Here, aVal*xSubVal (e.g., 5*1) is not within refine(...), preserving the multiplication. refine(0 + bVal*yVar) (e.g., refine(0 + -1*yVar)) simplifies to -yVar. cancel_zeroes ensures any stray 0+ is removed. This selectively applies refinement.
+
 For Inline SPTs:
 
 Ensure consistency between <initial-value> and <expression>. If <initial-value> has editable(), non-editable parts must match <expression>.
@@ -1196,9 +1223,7 @@ Based on all the provided information and adhering strictly to all guidelines (S
 The complete Problem Template XML
 
 <problem-template id="UNIQUE_PT_ID"> <!-- Ensure a unique ID is used -->
-
   <!-- ... all authored content, including instructions, mathyon-s, subproblems, steps, hints, etc. ... -->
-
 </problem-template>
 IGNORE_WHEN_COPYING_START
 content_copy
@@ -1206,7 +1231,6 @@ download
 Use code with caution.
 Xml
 IGNORE_WHEN_COPYING_END
-
 
 This XML must be well-formed, mathematically and pedagogically sound, correctly styled, localized, and robust for the specified randomization.
 
