@@ -351,7 +351,6 @@ Any other <step> that is pointed to by at least one other step's next-step attri
 Steps that are not step-number="1", are not pointed to by any next-step attribute, and do not initiate an alternative path (e.g., isolated final answer forms like iv() steps, or unlinked intermediate steps that are not alternative starts) SHOULD NOT have hints. Ensure these have empty hint fields.
 
 **Alternative Paths and Numbering Convention (NEW OFFICIAL CONVENTION):**
-These SPTs may contain alternative solution paths.
 *   **\`next-step\` Attribute:** The \`next-step\` attribute MUST contain a single, static step number (e.g., "2", "12", "None") or the literal string "None". It CANNOT contain functions (e.g., \`randpick(2,11,12,13)\`), lists, or any other dynamic logic. All branching logic must be handled by the student providing an expression that matches one of the defined alternative starting steps.
 *   **Standard Numbering for Paths:**
     *   **Main Path:** Uses sequential numbers starting from 1 (e.g., \`step-number="1"\` has \`next-step="2"\`, \`step-number="2"\` has \`next-step="3"\`, and so on). The optional \`step-number="0"\` (for a generic formula) would have \`next-step="1"\`.
@@ -446,6 +445,9 @@ Forbidden Content at Top Level: Base Mathyon macros for general variable assignm
 Ensure content within <mi> or <mt> tags correctly substitutes and renders variables defined in <mathyon-s>. While <mathyon-r> defines crucial equivalences for answer checking (e.g., linking a placeholder symbol like b to a value from <mathyon-s> such as bVal), the direct value substitution for rendering in <mi>bVal</mi> or a symbolic rendering in <mi>b</mi> primarily depends on definitions in <mathyon-s>. Ensure that what is intended for display aligns with these scopes.
 
 Adherence to Mathyon Constructs: You must operate strictly within the defined Mathyon macro set and language capabilities.
+
+**Commenting within MathyonS:** To write a comment within a `<mathyon-s>` block, use the hash symbol (`#`). Any text on a line following a hash symbol is treated as a comment. This is the only valid comment format for MathyonS code. XML-style comments (`<!-- ... -->`) and other programming comment styles (e.g., `//`) are not supported inside the `<mathyon-s>` tags and will cause errors. Note that this is distinct from the XML comments (`<!-- # ... -->`) used for path descriptions within the `<steps>` block.
+
 **CRITICAL Rule for \`randpick\` for Single Item Selection:**
   - **Correct Usage:** To randomly select ONE item from a list of choices, you MUST provide the choices directly as comma-separated arguments to \`randpick\`.
     Example: \`variableName = randpick('p','q','r','s')\` or \`numChoice = randpick(10, 20, 30)\`
@@ -495,20 +497,20 @@ Return Types of Randomization Macros for Multiple Items:
 Macros like randint(min, max, n) (where n > 1), randprime(min, max, n_primes) (where n_primes > 1), and randcoprime(min, max, n_numbers_returned) (where n_numbers_returned > 1) are expected to return a flat list of individual numbers. For example, randint(1,10,3) would return a list like [num1, num2, num3]. This flat list can be directly assigned to a single variable (which will then hold the list) or used directly with sort() before unpacking.
 
 Example (Correct Usage):
-<mathyon-s> // myNumList will hold a list, e.g. [5, 12, 2] 
+<mathyon-s> # myNumList will hold a list, e.g. [5, 12, 2] 
 myNumList = randint(1,20,3)
-// val1, val2, val3 will get sorted numbers 
+# val1, val2, val3 will get sorted numbers 
 val1, val2, val3 = sort(randint(1,20,3))
-// cprNum1, cprNum2 will get sorted coprime numbers 
+# cprNum1, cprNum2 will get sorted coprime numbers 
 cprNum1, cprNum2 = sort(randcoprime(2,10,2))
 </mathyon-s>
 
 randcoprime(min, max) (Single Pair): When the third argument (number of items) is omitted, randcoprime(min, max) returns a single pair of coprime integers. This pair might be represented as a list of two elements (e.g., [a,b]) or a similar two-element collection.
 
 Example (Handling a Single Pair):
-<mathyon-s> // aPair holds e.g. [3,7] or (3,7) 
+<mathyon-s> # aPair holds e.g. [3,7] or (3,7) 
 aPair = randcoprime(2,10)
-// list() ensures aPair is listified before sort 
+# list() ensures aPair is listified before sort 
 sortedVal1, sortedVal2 = sort(list(aPair))
 </mathyon-s>
 
@@ -558,9 +560,9 @@ A more robust pattern is to ensure that elements within the tuples are already r
     # Use these pre-picked single values in the tuples for the main assignment.
     # If 'pickedEven' appears multiple times in a chosen tuple, it will be the *same* number.
     xCoordOne, yCoordOne, xCoordTwo, yCoordTwo = randpick(
-        (pickedEven, pickedEven, pickedOdd, pickedEven), // Example: (E,E,O,E)
-        (pickedEven, pickedOdd, pickedOdd, pickedOdd),   // Example: (E,O,O,O)
-        // ... other combinations using pickedEven and pickedOdd ...
+        (pickedEven, pickedEven, pickedOdd, pickedEven), # Example: (E,E,O,E)
+        (pickedEven, pickedOdd, pickedOdd, pickedOdd),   # Example: (E,O,O,O)
+        # ... other combinations using pickedEven and pickedOdd ...
     )
     \`\`\`
 *   **Pattern 2 (User's working example - for independent randomness for each slot):** If each element in the tuples must be an *independent* random choice from a set of options:
@@ -581,9 +583,9 @@ A more robust pattern is to ensure that elements within the tuples are already r
     c2Val4 = randpick(-9,-7,-5,-3,-1,1,3,5,7,9)
     tupleCase2 = (c2Val1, c2Val2, c2Val3, c2Val4)
     
-    // ... define all other necessary tuple cases similarly ...
+    # ... define all other necessary tuple cases similarly ...
 
-    // Main assignment using the pre-resolved tuples
+    # Main assignment using the pre-resolved tuples
     xCoordOne, yCoordOne, xCoordTwo, yCoordTwo = randpick(tupleCase1, tupleCase2, ...)
     \`\`\`
     This ensures each element in the chosen tuple is a number *before* the outer \`randpick\` selects it and unpacking occurs.
@@ -595,15 +597,15 @@ Refer to these **user-validated examples** for conditional assignments (these ar
 # For instance, instead of forbidden MathyonS like:
 #   minLength = -15 + (diameterLength if dir == -1 else 0)
 #   maxLength = 15 - (diameterLength if dir == 1 else 0)
-#   varyingCoordOne = randint(minLength, maxLength) // (User example simplifies this step too)
+#   varyingCoordOne = randint(minLength, maxLength) # (User example simplifies this step too)
 # Use the randpick pattern to determine 'dir' and a 'coordBoundary' (like user's 'minmaxlength'):
 # (This pattern can also imply varyingCoordOne is set to one of the bounds directly,
 #  e.g., varyingCoordOne = coordBoundary, if randint(min, max) logic is simplified as such by design.)
 #
 # Assume diameterLength is previously defined (e.g., diameterLength = randint(2,15))
 dir, coordBoundary = randpick(
-    (1, N(15 - diameterLength)),  // Case 1: dir is 1, coordBoundary becomes 15-diameterLength
-    (-1, N(-15 + diameterLength)) // Case 2: dir is -1, coordBoundary becomes -15+diameterLength
+    (1, N(15 - diameterLength)),  # Case 1: dir is 1, coordBoundary becomes 15-diameterLength
+    (-1, N(-15 + diameterLength)) # Case 2: dir is -1, coordBoundary becomes -15+diameterLength
 )
 # 'dir' will be 1 or -1.
 # 'coordBoundary' will hold the calculated boundary value based on 'dir'.
@@ -616,14 +618,14 @@ dir, coordBoundary = randpick(
 # For instance, instead of a forbidden if/else block like:
 #   if isHorizontal == 1:
 #     xCoordOne = varyingCoordOne; xCoordTwo = varyingCoordTwo; yCoordOne = fixedCoord; yCoordTwo = fixedCoord;
-#   else: // isHorizontal == 0
+#   else: # isHorizontal == 0
 #     xCoordOne = fixedCoord; xCoordTwo = fixedCoord; yCoordOne = varyingCoordOne; yCoordTwo = varyingCoordTwo;
 # Use this randpick pattern:
 #
 # Assume varyingCoordOne, varyingCoordTwo, fixedCoord are previously defined.
 isHorizontal, p1x, p1y, p2x, p2y = randpick(
-    (1, varyingCoordOne, fixedCoord, varyingCoordTwo, fixedCoord), // Horizontal case (isHorizontal=1)
-    (0, fixedCoord, varyingCoordOne, fixedCoord, varyingCoordTwo)  // Vertical case (isHorizontal=0)
+    (1, varyingCoordOne, fixedCoord, varyingCoordTwo, fixedCoord), # Horizontal case (isHorizontal=1)
+    (0, fixedCoord, varyingCoordOne, fixedCoord, varyingCoordTwo)  # Vertical case (isHorizontal=0)
 )
 # Now p1x, p1y, p2x, p2y hold the coordinates for the chosen orientation.
 # isHorizontal (1 for horizontal, 0 for vertical) can be used if needed for other logic.
@@ -732,30 +734,30 @@ Part 3: Example of PT XML Structure (for guidance)
     <p>PT Instruction text, possibly with <mi>variableName</mi> or <mqlatex>LaTeX</mqlatex>.</p>
   </instruction>
   <attachment>...</attachment>
-  <mathyon-s> // MODIFIED from &lt;mathyon&gt; 
-    bVal = randint(2,9) // Multi-character, no underscores/hyphens - OK
-    hVal = randint(2,9) // Multi-character, no underscores/hyphens - OK
-    itemcount = 5    // All lowercase, multi-character - also OK
-    value1 = 10      // Letter + number - also OK
-    // Example of conditional logic using randpick for MathyonS (as per user-validated patterns)
-    // statusFlag, descriptiveText = randpick( (1, "Active"), (0, "Inactive") )
-    // isHorizontal, x1, y1, x2, y2 = randpick( (1, vX1, vYF, vX2, vYF), (0, vXF, vY1, vXF, vY2) )
-    // Example of global equivalence, if applicable to all SPTs
-    // function.declare(globalFunc, xArg) // 'globalFunc' contains only letters. 'xArg' is symbolic.
-    // function.equals(globalFunc, xArg+1)
-    // function.alias(globalFunc, y) // 'y' is a single-letter alias
+  <mathyon-s> # MODIFIED from &lt;mathyon&gt; 
+    bVal = randint(2,9) # Multi-character, no underscores/hyphens - OK
+    hVal = randint(2,9) # Multi-character, no underscores/hyphens - OK
+    itemcount = 5    # All lowercase, multi-character - also OK
+    value1 = 10      # Letter + number - also OK
+    # Example of conditional logic using randpick for MathyonS (as per user-validated patterns)
+    # statusFlag, descriptiveText = randpick( (1, "Active"), (0, "Inactive") )
+    # isHorizontal, x1, y1, x2, y2 = randpick( (1, vX1, vYF, vX2, vYF), (0, vXF, vY1, vXF, vY2) )
+    # Example of global equivalence, if applicable to all SPTs
+    # function.declare(globalFunc, xArg) # 'globalFunc' contains only letters. 'xArg' is symbolic.
+    # function.equals(globalFunc, xArg+1)
+    # function.alias(globalFunc, y) # 'y' is a single-letter alias
   </mathyon-s>
   <subproblems>
     <!-- SPT 1 -->
     <subproblem id="SPT_ID_1" type="algebraic">
       <instruction><p>SPT 1 Instruction. Calculate areaVar. The formula is Area = 1/2 * base * height.</p></instruction>
       <mathyon-r>
-        variable.equals(b, bVal) // 'b' is a formula placeholder, linked to <mathyon-s> var 'bVal'
-        variable.equals(h, hVal) // 'h' is a formula placeholder, linked to <mathyon-s> var 'hVal'
-        // If a function 'userDefinedFunc' was used in steps, and an alias 'y' represents its value/call:
-        // function.declare(userDefinedFunc, xArg) // 'userDefinedFunc' contains only letters.
-        // function.equals(userDefinedFunc, xArg*xArg)
-        // function.alias(userDefinedFunc, y) // 'y' is a single-letter alias
+        variable.equals(b, bVal) # 'b' is a formula placeholder, linked to <mathyon-s> var 'bVal'
+        variable.equals(h, hVal) # 'h' is a formula placeholder, linked to <mathyon-s> var 'hVal'
+        # If a function 'userDefinedFunc' was used in steps, and an alias 'y' represents its value/call:
+        # function.declare(userDefinedFunc, xArg) # 'userDefinedFunc' contains only letters.
+        # function.equals(userDefinedFunc, xArg*xArg)
+        # function.alias(userDefinedFunc, y) # 'y' is a single-letter alias
       </mathyon-r>
       <steps>
         <!-- # Main path: Using generic formula first -->
